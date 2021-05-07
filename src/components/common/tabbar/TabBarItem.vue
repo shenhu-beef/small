@@ -48,6 +48,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        background-color: #fff;
     }
     
     .tab-bar-item img {

@@ -26,5 +26,6 @@
         height: 49px;
         text-align: center;
         box-shadow: 0 -1px 10px rgba(100, 100, 100, .2);
+        z-index: 10;
     }
 </style>
