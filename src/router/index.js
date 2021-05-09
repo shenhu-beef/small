@@ -9,6 +9,8 @@ const Shop = () =>
     import ('../views/Shop/Shop.vue')
 const My = () =>
     import ('../views/My/My.vue')
+const Detail = () =>
+    import ('../views/detail/Detail.vue')
 
 Vue.use(VueRouter)
 
@@ -31,6 +33,10 @@ const routes = [{
     {
         path: '/my',
         component: My
+    },
+    {
+        path: '/detail/:iid',
+        component: Detail
     }
 ]
 

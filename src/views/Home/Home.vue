@@ -3,11 +3,20 @@
         <nav-bar class="home-nav">
             <div slot="center">购物街</div>
         </nav-bar>
+        <tab-control :titles="['流行', '新品', '精选']" 
+                         @tabClick="tabClick" 
+                         ref="tabControl1"
+                         class="fakeTabControl"
+                         v-show="isTabShow"
+            ></tab-control>
         <scroll class="content" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="contentScroll" @pullingUp="loadMore">
-            <home-swiper :banners="banners"></home-swiper>
+            <home-swiper :banners="banners" @imgload='swiperImgLoad'></home-swiper>
             <recommend :recommends="recommends"></recommend>
             <feature></feature>
-            <tab-control :titles="['流行', '新品', '精选']" @tabClick="tabClick"></tab-control>
+            <tab-control :titles="['流行', '新品', '精选']" 
+                         @tabClick="tabClick" 
+                         ref="tabControl2"
+            ></tab-control>
             <goods-list :goods='changeTpye'></goods-list>
         </scroll>
         <back-top @click.native="backClick" v-show="isShow"></back-top>
@@ -65,7 +74,9 @@
                 },
                 currentType: 'pop',
                 scroll: null,
-                isShow: false
+                isShow: false,
+                taboffsetTop: 0,
+                isTabShow: false,
             }
         },
         created() {
@@ -75,9 +86,13 @@
             this.getHomeGoods('new')
             this.getHomeGoods('sell')
 
+        },
+        mounted() {
             //$bus总线，可与其他组件进行通信
+            //此处与GoodsListItem组件进行通信,图片每加载一次，就刷新一次
+            const refresh = this.debounce(this.$refs.scroll.refresh, 500)
             this.$bus.$on('imgLoad', () => {
-                console.log(123);
+                refresh()
             })
         },
         computed: {
@@ -89,6 +104,15 @@
             /* 
                 事件监听的相关方法
             */
+            debounce(func, delay) {
+                let timer = null;
+                return function(...args) {
+                    if (timer) clearTimeout(timer)
+                    timer = setTimeout(() => {
+                        func.apply(this, args)
+                    }, delay)
+                }
+            },
             backClick() {
                 //点击右下角上箭头在0.5秒滚回到顶部
                 //$reds.scroll.scroll.是获取到scroll组件中的scroll对象
@@ -107,16 +131,29 @@
                         this.currentType = 'sell';
                         break;
                 }
+                this.$refs.tabControl1.current = index
+                this.$refs.tabControl2.current = index
             },
             contentScroll(position) {
+                //回到顶部显示隐藏
                 if (position.y > -1000) {
                     this.isShow = false
                 } else {
                     this.isShow = true
                 }
+                //TabControl显示隐藏
+                if (-position.y > this.taboffsetTop) {
+                    this.isTabShow = true
+                } else {
+                    this.isTabShow = false
+                }
+
             },
             loadMore() {
                 this.getHomeGoods(this.currentType);
+            },
+            swiperImgLoad() {
+                this.taboffsetTop = this.$refs.tabControl2.$el.offsetTop;
             },
             /* 
                 下面网络请求的相关方法
@@ -140,7 +177,7 @@
                     this.$refs.scroll.finishPullUp()
 
 
-                    this.$refs.scroll.scroll.refresh();
+                    // this.$refs.scroll.scroll.refresh();
                 })
             },
 
@@ -152,13 +189,13 @@
     #home {
         /* position: relative; */
         height: 100vh;
-        padding-top: 44px;
+        /* padding-top: 44px; */
     }
     
     .home-nav {
-        position: fixed;
+        /* position: fixed;
         left: 0;
-        top: 0;
+        top: 0; */
         width: 100%;
         background-color: var(--color-tint);
         color: #fff
@@ -174,4 +211,9 @@
         height: 600px;
         overflow: hidden;
     } */
+    
+    .fakeTabControl {
+        position: relative;
+        z-index: 9;
+    }
 </style>

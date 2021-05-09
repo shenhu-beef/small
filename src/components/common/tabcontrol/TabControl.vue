@@ -36,8 +36,6 @@
 
 <style scoped>
     .tab-control {
-        position: sticky;
-        top: 44px;
         display: flex;
         text-align: center;
         height: 40px;

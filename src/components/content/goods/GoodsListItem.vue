@@ -1,6 +1,6 @@
 <template>
     <div class="goods">
-        <img :src="goodsitem.show.img" alt="" @load="imgLoad">
+        <img :src="goodsitem.show.img" alt="" @load="imgLoad" @click="imgClick">
         <div class="goods-info">
             <p>{{goodsitem.title}}</p>
             <span class="price">{{goodsitem.price}}</span> 
@@ -24,6 +24,9 @@
             //$bus总线，可与其他组件进行通信
             imgLoad() {
                 this.$bus.$emit('imgLoad')
+            },
+            imgClick() {
+                this.$router.push('/detail/' + this.goodsitem.iid)
             }
         }
     }
