@@ -160,7 +160,7 @@
             */
             getHomeMultidata() {
                 getHomeMultidata().then(res => {
-                    console.log(res);
+                    // console.log(res);
                     this.banners = res.data.data.banner.list
                     this.recommends = res.data.data.recommend.list
                 })
@@ -168,16 +168,13 @@
             getHomeGoods(type) {
                 const page = this.goods[type].page + 1
                 getHomeGoods(type, page).then(res => {
-                    console.log(res);
+                    // console.log(res);
                     this.goods[type].list.push(...res.data.data.list)
                         //也可以用for循环遍历将list依次传给
-                    console.log(res.data.data.list);
+                        // console.log(res.data.data.list);
                     this.goods[type].page += 1
 
                     this.$refs.scroll.finishPullUp()
-
-
-                    // this.$refs.scroll.scroll.refresh();
                 })
             },
 
