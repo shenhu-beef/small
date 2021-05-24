@@ -1,16 +1,17 @@
 <template>
     <div id="detail">
-        <detail-nav-bar class="detailNavBar"></detail-nav-bar>
-        <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll">
+        <detail-nav-bar class="detailNavBar" @titleClick="titleClick" ref="nav"></detail-nav-bar>
+        <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll" @scroll="contentScroll">
             <detail-swiper :top-image="topImage"></detail-swiper>
             <detail-base-info :goods="goods"></detail-base-info>
             <detail-shop-info :shop="shop"></detail-shop-info>
             <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
-            <detail-param-info :param-info="paramInfo"></detail-param-info>
-            <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+            <detail-param-info ref="param" :param-info="paramInfo"></detail-param-info>
+            <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
             <!-- <detail-recommend-info :recommend-list="recommendList"></detail-recommend-info> -->
-            <goods-list :good='recommendList'></goods-list>
+            <goods-list ref="recommend" :good='recommendList'></goods-list>
         </scroll>
+        <detail-bottom-bar></detail-bottom-bar>
     </div>
 </template>
 
@@ -25,6 +26,7 @@
     import DetailCommentInfo from './childComps/DetailCommentInfo'
     import DetailRecommendInfo from './childComps/DetailRecommendInfo'
     import GoodsList from 'components/content/goods/GoodsList'
+    import DetailBottomBar from './childComps/DetailBottomBar'
     import {
         getDetail,
         Goods,
@@ -52,7 +54,9 @@
                         page: 0,
                         list: [],
                     },
-                }
+                },
+                themeY: [], //四个nav的top值
+                currentIndex: null
             }
         },
         components: {
@@ -65,7 +69,8 @@
             DetailParamInfo,
             DetailCommentInfo,
             DetailRecommendInfo,
-            GoodsList
+            GoodsList,
+            DetailBottomBar
         },
         created() {
             this.getHomeGoods('pop')
@@ -97,6 +102,9 @@
 
             })
         },
+        mounted() {
+
+        },
         computed: {
             recommendList() {
                 return this.good['pop'].list
@@ -105,6 +113,13 @@
         methods: {
             imageLoad() {
                 this.$refs.scroll.refresh()
+
+                this.themeY = []
+                this.themeY.push(0)
+                this.themeY.push(this.$refs.param.$el.offsetTop)
+                this.themeY.push(this.$refs.comment.$el.offsetTop)
+                this.themeY.push(this.$refs.recommend.$el.offsetTop)
+                console.log(this.themeY);
             },
             getHomeGoods(type) {
                 const page = this.good[type].page + 1
@@ -118,6 +133,24 @@
                     this.$refs.scroll.finishPullUp()
                 })
             },
+            titleClick(index) {
+                console.log(index);
+                this.$refs.scroll.scrollTo(0, -this.themeY[index], 200)
+            },
+            contentScroll(position) {
+                // console.log(position);
+                const positionY = -position.y;
+                let length = this.themeY.length
+                for (let i = 0; i < length; i++) {
+                    // console.log(i);
+                    if (this.currentIndex !== i && ((i < length - 1 && positionY > this.themeY[parseInt(i)] && positionY < this.themeY[parseInt(i) + 1]) || (i === length - 1 && positionY > this.themeY[parseInt(i)]))) {
+                        // console.log(i);
+                        this.currentIndex = i;
+                        console.log(this.currentIndex);
+                        this.$refs.nav.currentIndex = this.currentIndex
+                    }
+                }
+            }
         }
     }
 </script>
@@ -137,7 +170,7 @@
     }
     
     .content {
-        height: calc(100% - 44px);
+        height: calc(100% - 44px - 49px);
         background-color: #fff;
     }
 </style>
