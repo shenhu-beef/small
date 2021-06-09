@@ -77,7 +77,16 @@
                 isShow: false,
                 taboffsetTop: 0,
                 isTabShow: false,
+                saveY: 0,
             }
+        },
+        activated() {
+            this.$refs.scroll.scrollTo(0, this.saveY, 100)
+            this.$refs.scroll.refresh()
+        },
+        deactivated() {
+            this.saveY = this.$refs.scroll.scroll.y
+            console.log(this.saveY);
         },
         created() {
             //created里的方法具体写在methods里，created里只放方法名

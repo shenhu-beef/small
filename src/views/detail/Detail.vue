@@ -1,6 +1,9 @@
 <template>
     <div id="detail">
         <detail-nav-bar class="detailNavBar" @titleClick="titleClick" ref="nav"></detail-nav-bar>
+        <!-- <ul>
+            <li v-for="item in $store.state.cartList">{{item}}</li>
+        </ul> -->
         <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll" @scroll="contentScroll">
             <detail-swiper :top-image="topImage"></detail-swiper>
             <detail-base-info :goods="goods"></detail-base-info>
@@ -11,7 +14,9 @@
             <!-- <detail-recommend-info :recommend-list="recommendList"></detail-recommend-info> -->
             <goods-list ref="recommend" :good='recommendList'></goods-list>
         </scroll>
-        <detail-bottom-bar></detail-bottom-bar>
+        <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+        <back-top @click.native="backClick" v-show="isShow"></back-top>
+        <toast :message='message' :show="show"></toast>
     </div>
 </template>
 
@@ -27,6 +32,8 @@
     import DetailRecommendInfo from './childComps/DetailRecommendInfo'
     import GoodsList from 'components/content/goods/GoodsList'
     import DetailBottomBar from './childComps/DetailBottomBar'
+    import BackTop from 'components/common/backtop/BackTop'
+    import Toast from 'components/common/toast/Toast'
     import {
         getDetail,
         Goods,
@@ -56,7 +63,10 @@
                     },
                 },
                 themeY: [], //四个nav的top值
-                currentIndex: null
+                currentIndex: null,
+                isShow: false,
+                message: '',
+                show: false,
             }
         },
         components: {
@@ -70,7 +80,9 @@
             DetailCommentInfo,
             DetailRecommendInfo,
             GoodsList,
-            DetailBottomBar
+            DetailBottomBar,
+            BackTop,
+            Toast
         },
         created() {
             this.getHomeGoods('pop')
@@ -143,13 +155,50 @@
                 let length = this.themeY.length
                 for (let i = 0; i < length; i++) {
                     // console.log(i);
-                    if (this.currentIndex !== i && ((i < length - 1 && positionY > this.themeY[parseInt(i)] && positionY < this.themeY[parseInt(i) + 1]) || (i === length - 1 && positionY > this.themeY[parseInt(i)]))) {
+                    if (this.currentIndex !== i && ((i < length - 1 && positionY > this.themeY[parseInt(i)] && positionY <= this.themeY[parseInt(i) + 1]) || (i === length - 1 && positionY > this.themeY[parseInt(i)]))) {
                         // console.log(i);
                         this.currentIndex = i;
                         console.log(this.currentIndex);
                         this.$refs.nav.currentIndex = this.currentIndex
                     }
+                };
+                //回到顶部显示隐藏
+                if (position.y > -1000) {
+                    this.isShow = false
+                } else {
+                    this.isShow = true
                 }
+                //TabControl显示隐藏
+                if (-position.y > this.taboffsetTop) {
+                    this.isTabShow = true
+                } else {
+                    this.isTabShow = false
+                }
+            },
+            backClick() {
+                //点击右下角上箭头在0.5秒滚回到顶部
+                //$reds.scroll.scroll.是获取到scroll组件中的scroll对象
+                // this.$refs.scroll.scroll.scrollTo(0, 0, 500);
+                this.$refs.scroll.scrollTo(0, 0, 500)
+            },
+            addToCart() {
+                // console.log("添加购物车成功");
+                const product = {};
+                product.img = this.topImage[0];
+                product.title = this.goods.title;
+                product.desc = this.goods.desc;
+                product.price = this.goods.realPrice;
+                product.iid = this.iid;
+
+                //添加购物车，
+                this.$store.dispatch('addCart', product).then(res => {
+                    this.show = true;
+                    this.message = res;
+                    setTimeout(() => {
+                            this.show = false
+                        }, 1500)
+                        // console.log(res);
+                })
             }
         }
     }
