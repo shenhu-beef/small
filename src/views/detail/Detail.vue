@@ -214,7 +214,7 @@
     
     .detailNavBar {
         position: relative;
-        z-index: 10;
+        z-index: 20;
         background-color: #fff;
     }
     
