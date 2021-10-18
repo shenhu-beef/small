@@ -32,7 +32,7 @@
         components: {
             TabBar,
             TabBarItem
-        }
+        },
     }
 </script>
 

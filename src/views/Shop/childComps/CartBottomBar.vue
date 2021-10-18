@@ -3,6 +3,7 @@
         <check-button @click.native="checkClick" class="checked" :is-check="isSelectAll"></check-button>
         <span>全选</span>
         <div class="totalPrice">合计:￥{{totalPrice}}</div>
+        <div class="cleanCar" @click="cleanCar">清空</div>
         <button class="calculate" @click="calcClick(totalPrice,isSelectAll)">去计算({{checkLength}})</button>
     </div>
 </template>
@@ -61,6 +62,10 @@
             },
             calcClick(totalPrice, isSelectAll) {
                 this.$emit('calcClick', totalPrice, isSelectAll)
+            },
+            cleanCar() {
+                // console.log(123);
+                this.$store.state.cartList = []
             }
         }
     }
@@ -85,7 +90,18 @@
     .totalPrice {
         margin-left: 10px;
     }
-    
+    .cleanCar {
+        width: 70px;
+        height: 100%;
+        font-size: 13px;
+        color: #fff;
+        background-color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 100px;
+    }
     .calculate {
         position: absolute;
         right: 0;

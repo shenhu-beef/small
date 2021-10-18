@@ -86,7 +86,7 @@
         },
         deactivated() {
             this.saveY = this.$refs.scroll.scroll.y
-            console.log(this.saveY);
+            // console.log(this.saveY);
         },
         created() {
             //created里的方法具体写在methods里，created里只放方法名
@@ -144,6 +144,7 @@
                 this.$refs.tabControl2.current = index
             },
             contentScroll(position) {
+                // console.log(position);
                 //回到顶部显示隐藏
                 if (position.y > -1000) {
                     this.isShow = false
@@ -182,7 +183,6 @@
                         //也可以用for循环遍历将list依次传给
                         // console.log(res.data.data.list);
                     this.goods[type].page += 1
-
                     this.$refs.scroll.finishPullUp()
                 })
             },

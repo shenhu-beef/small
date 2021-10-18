@@ -11,7 +11,11 @@
           <div class="item-desc">商品描述: {{itemInfo.desc}}</div>
           <div class="info-bottom">
             <div class="item-price left">¥{{itemInfo.price}}</div>
-            <div class="item-count right">x{{itemInfo.count}}</div>
+            <div class="item-count right">
+                <div class="num" @click="sub(itemInfo)">-</div>
+                <div>{{itemInfo.count}}</div>
+                <div class="num" @click="add(itemInfo)">+</div>
+            </div>
           </div>
         </div>
       </div>
@@ -35,6 +39,17 @@
         methods: {
             isChecked() {
                 this.itemInfo.checked = !this.itemInfo.checked
+            },
+            add(itemInfo) {
+                itemInfo.count ++
+            },
+            sub(itemInfo) {
+                if(itemInfo.count == 1) {
+                    // console.log(this.$store.state.cartList);
+                    this.$store.state.cartList.splice(this.$store.state.cartList.indexOf(itemInfo),1)
+                } else if(itemInfo.count > 1) {
+                    itemInfo.count --
+                }
             }
         }
     }
@@ -99,5 +114,16 @@
     
     .info-bottom .item-price {
         color: orangered;
+    }
+    .item-count {
+        display: flex;
+        align-items: center;
+    }
+    .num {
+        height: 100%;
+        width: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>

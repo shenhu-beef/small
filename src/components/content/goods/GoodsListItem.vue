@@ -1,9 +1,10 @@
 <template>
     <div class="goods">
-        <img :src="goodsitem.show.img" alt="" @load="imgLoad" @click="imgClick">
+        <!-- <img v-if="goodsitem.show.img" :src="goodsitem.show.img" alt="" @load="imgLoad" @click="imgClick"> -->
+        <img :src="goodsitem.img || goodsitem.show.img" alt="" @load="imgLoad" @click="imgClick">
         <div class="goods-info">
             <p>{{goodsitem.title}}</p>
-            <span class="price">{{goodsitem.price}}</span> 
+            <span class="price">{{goodsitem.price}}</span>
             <span class="collect">{{goodsitem.cfav}}</span>
         </div>
     </div>
@@ -36,7 +37,7 @@
     .goods {
         padding-bottom: 40px;
         position: relative;
-        width: 48%;
+        width: 47%;
         margin: 5px 3px;
     }
     

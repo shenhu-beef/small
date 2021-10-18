@@ -1,7 +1,8 @@
 <template>
     <div class="goods">
-        <goods-list-item v-for="item in goods" :goodsitem="item"></goods-list-item>
-        <goods-list-item v-for="item in good" :goodsitem="item"></goods-list-item>
+        <goods-list-item v-for="(item,index) in goods" :goodsitem="item" :key="index"></goods-list-item>
+        <goods-list-item v-for="(item,index) in good" :goodsitem="item" :key="index"></goods-list-item>
+        <goods-list-item v-for="(item,index) in categoryGoodsitem" :goodsitem="item" :key="index"></goods-list-item>
     </div>
 </template>
 
@@ -21,7 +22,13 @@
                 default () {
                     return []
                 }
-            }
+            },
+            categoryGoodsitem: {
+                type: Array,
+                default () {
+                    return []
+                }
+            },
         },
         components: {
             GoodsListItem
